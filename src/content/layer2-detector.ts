@@ -8,20 +8,74 @@ const pendingTargets = new Set<Element>()
 let scheduleCheckTimeout: number | null = null
 
 let lastUserClickAt = 0
+let lastClickedElement: EventTarget | null = null
+let lastUrl = location.href
 
 function trackUserClicks(): void {
-  document.addEventListener('click', () => {
+  document.addEventListener('click', (e) => {
     lastUserClickAt = Date.now()
+    lastClickedElement = e.target
   }, { capture: true, passive: true })
 }
 
-function wasRecentlyTriggeredByUser(): boolean {
-  return Date.now() - lastUserClickAt < 2000
+function resetClickOnNavigation(): void {
+  const check = () => {
+    if (location.href !== lastUrl) {
+      lastUrl = location.href
+      lastUserClickAt = 0
+      lastClickedElement = null
+      log('URL changed, reset click tracking')
+    }
+  }
+  window.addEventListener('popstate', check)
+  window.addEventListener('hashchange', check)
+
+  const origPushState = history.pushState.bind(history)
+  history.pushState = (...args) => {
+    origPushState(...args)
+    check()
+  }
+  const origReplaceState = history.replaceState.bind(history)
+  history.replaceState = (...args) => {
+    origReplaceState(...args)
+    check()
+  }
+}
+
+function wasRecentlyTriggeredByUser(el: Element): boolean {
+  if (Date.now() - lastUserClickAt > 2000) return false
+
+  if (!lastClickedElement || !(lastClickedElement instanceof Element)) return false
+
+  // If the clicked element is inside or is a parent of the detected element,
+  // it's likely a user-triggered modal (e.g. lightbox)
+  if (el.contains(lastClickedElement) || lastClickedElement.closest?.('[data-lightbox]')) {
+    return true
+  }
+
+  // If the click was on a navigation link, don't skip
+  const clickedEl = lastClickedElement as HTMLElement
+  const isNavClick =
+    clickedEl.tagName === 'A' ||
+    clickedEl.closest?.('a') !== null ||
+    clickedEl.closest?.('nav') !== null
+  if (isNavClick) return false
+
+  // For other clicks, check if the new element appeared near the click target
+  if (lastClickedElement.contains(el) || el.contains(lastClickedElement)) {
+    return true
+  }
+
+  return false
 }
 
 export function scoreAsInterstitial(el: Element): number {
   if (!(el instanceof HTMLElement)) return 0
   if (!el.isConnected) return 0
+
+  const tag = el.tagName
+  if (tag === 'BODY' || tag === 'HTML') return 0
+  if (tag === 'MAIN' || tag === 'HEADER' || tag === 'FOOTER' || tag === 'NAV') return 0
 
   const rect = el.getBoundingClientRect()
   const vw = window.innerWidth
@@ -33,11 +87,13 @@ export function scoreAsInterstitial(el: Element): number {
   const style = getComputedStyle(el)
   if (style.display === 'none' || style.visibility === 'hidden') return 0
 
+  if (style.position !== 'fixed' && style.position !== 'absolute') return 0
+
   let score = 0
 
   // --- Positive signals ---
 
-  if (style.position === 'fixed' || style.position === 'absolute') score += 2
+  score += 2
 
   const zIndex = parseInt(style.zIndex || '0', 10)
   if (zIndex >= 1000) score += 2
@@ -89,6 +145,10 @@ export function scoreAsInterstitial(el: Element): number {
 
   if (/age.verification|terms.of.service|利用規約|年齢確認/.test(text)) score -= 5
 
+  if (/\b(banner|creative.container|clickthrough|ad-?slot|ad-?unit|ad-?container)\b/.test(idClass)) score -= 3
+
+  if (window.self !== window.top) score -= 3
+
   return score
 }
 
@@ -104,9 +164,25 @@ export function isStillVisible(el: Element): boolean {
   return true
 }
 
+function isKnownAdElement(el: Element): boolean {
+  if (!(el instanceof HTMLElement)) return false
+  const tag = el.tagName
+  const idClass = (el.id + ' ' + el.className).toLowerCase()
+  if (tag === 'INS' && /adsbygoogle/.test(idClass)) return true
+  if (el.hasAttribute('data-ad-status')) return true
+  if (el.hasAttribute('data-vignette-loaded')) return true
+  return false
+}
+
 function handleInterstitial(el: Element, score: number): void {
   const detectedAt = Date.now()
   logDetection(el, score)
+
+  if (isKnownAdElement(el)) {
+    log('Known ad element detected, force-removing immediately')
+    forceRemove(el, score, detectedAt, 'known-ad-element')
+    return
+  }
 
   const closeBtn = findCloseButton(el)
 
@@ -131,14 +207,14 @@ function processBatch(): void {
   const targets = Array.from(pendingTargets)
   pendingTargets.clear()
 
-  if (wasRecentlyTriggeredByUser()) {
-    log('Skipping batch — recent user click detected')
-    return
-  }
-
   for (const el of targets) {
     if (!el.isConnected) continue
     if (processedElements.has(el)) continue
+
+    if (wasRecentlyTriggeredByUser(el)) {
+      log('Skipping element — likely user-triggered:', el.tagName, el.id || el.className)
+      continue
+    }
 
     const score = scoreAsInterstitial(el)
     if (score >= getScoreThreshold()) {
@@ -150,6 +226,7 @@ function processBatch(): void {
 
 export function startDetector(): void {
   trackUserClicks()
+  resetClickOnNavigation()
 
   const observer = new MutationObserver((mutations) => {
     for (const mutation of mutations) {

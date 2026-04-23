@@ -37,6 +37,7 @@ function unlockBodyScroll(): void {
   document.body.style.removeProperty('position')
   document.body.style.removeProperty('width')
   document.body.style.removeProperty('top')
+  document.body.removeAttribute('aria-hidden')
   document.documentElement.style.removeProperty('overflow')
   document.documentElement.style.removeProperty('position')
 

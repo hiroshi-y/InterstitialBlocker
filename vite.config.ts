@@ -15,7 +15,6 @@ const manifest = defineManifest({
     {
       matches: ['<all_urls>'],
       js: ['src/content/index.ts'],
-      css: ['src/assets/layer1.css'],
       run_at: 'document_start',
       all_frames: true,
       match_about_blank: true,

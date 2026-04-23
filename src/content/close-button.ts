@@ -59,6 +59,7 @@ export function findCloseButton(container: Element): HTMLElement | null {
 
   for (const el of candidates) {
     if (!isClickable(el)) continue
+    if (isAdRelatedElement(el)) continue
 
     const rect = el.getBoundingClientRect()
     if (rect.width === 0 || rect.height === 0) continue
@@ -84,6 +85,24 @@ export function findCloseButton(container: Element): HTMLElement | null {
   }
 
   return null
+}
+
+function isAdRelatedElement(el: HTMLElement): boolean {
+  const idClass = (el.id + ' ' + el.className + ' ' + (el.getAttribute('src') || '')).toLowerCase()
+  if (/ad-?choices|adchoices|ad-?prefs|ad-?info|ad-?icon/.test(idClass)) return true
+
+  if (el.tagName === 'A' && el.getAttribute('target') === '_blank') {
+    const href = (el.getAttribute('href') || '').toLowerCase()
+    if (/adprefs|adchoices|ads\/|doubleclick|googlesyndication/.test(href)) return true
+  }
+
+  const img = el.querySelector('img')
+  if (img) {
+    const imgAttrs = (img.className + ' ' + img.id + ' ' + (img.getAttribute('src') || '') + ' ' + (img.getAttribute('alt') || '')).toLowerCase()
+    if (/ad-?choices|adchoices|ad-?info/.test(imgAttrs)) return true
+  }
+
+  return false
 }
 
 function isClickable(el: HTMLElement): boolean {
