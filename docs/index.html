@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InterstitialBlocker — Privacy Policy</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --muted: #666666;
+      --border: #e0e0e0;
+      --accent: #2563eb;
+      --code-bg: #f5f5f5;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a1a;
+        --text: #e0e0e0;
+        --muted: #999999;
+        --border: #333333;
+        --accent: #60a5fa;
+        --code-bg: #2a2a2a;
+      }
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    h2 {
+      font-size: 1.4rem;
+      margin-top: 2.5rem;
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      font-size: 1.1rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.4rem;
+    }
+    p, ul {
+      margin-bottom: 1rem;
+    }
+    ul {
+      padding-left: 1.5rem;
+    }
+    li {
+      margin-bottom: 0.3rem;
+    }
+    code {
+      background: var(--code-bg);
+      padding: 0.15rem 0.4rem;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+    .updated {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+    .lang-switch {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    .lang-switch button {
+      padding: 0.4rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    .lang-switch button.active {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+    .lang-section { display: none; }
+    .lang-section.active { display: block; }
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>InterstitialBlocker</h1>
+    <p class="updated">Last updated / 最終更新: 2026-04-23</p>
+
+    <div class="lang-switch">
+      <button id="btn-en" class="active" onclick="switchLang('en')">English</button>
+      <button id="btn-ja" onclick="switchLang('ja')">日本語</button>
+    </div>
+
+    <!-- English -->
+    <div id="lang-en" class="lang-section active">
+      <h2>Privacy Policy</h2>
+
+      <h3>Data Collection</h3>
+      <p>InterstitialBlocker does <strong>not</strong> collect, transmit, or share any personal data. All processing occurs entirely within your browser.</p>
+
+      <h3>Data Stored Locally</h3>
+      <p>The following data is stored locally on your device using the browser's built-in storage (<code>chrome.storage.sync</code>):</p>
+      <ul>
+        <li><strong>Extension settings</strong>: Enabled/disabled state, detection sensitivity threshold, and debug logging preference.</li>
+        <li><strong>Whitelist</strong>: A list of domains where you have chosen to disable the extension.</li>
+        <li><strong>Detection history</strong>: A record of recent interstitial detections (up to 100 entries), including the domain, timestamp, detection score, and resolution method. This data is stored solely to help you review the extension's activity.</li>
+      </ul>
+      <p>This data syncs across your browsers only if you are signed into Chrome/Edge sync. It is never sent to any external server.</p>
+
+      <h3>Permissions</h3>
+      <ul>
+        <li><strong><code>&lt;all_urls&gt;</code> / Host permissions</strong>: Required to detect and dismiss interstitial ads on any website you visit. The extension does not read or modify page content other than interstitial overlays.</li>
+        <li><strong><code>storage</code></strong>: Used to save your settings and detection history locally.</li>
+        <li><strong><code>activeTab</code> / <code>tabs</code></strong>: Used to display the current domain in the popup and manage per-site whitelist settings.</li>
+      </ul>
+
+      <h3>Third-Party Services</h3>
+      <p>InterstitialBlocker does not use any third-party analytics, tracking, or advertising services.</p>
+
+      <h3>Changes to This Policy</h3>
+      <p>If this policy is updated, the changes will be reflected on this page and in the extension's store listing.</p>
+
+      <h3>Contact</h3>
+      <p>If you have questions about this privacy policy, please open an issue on the <a href="https://github.com/hiroshi-y/InterstitialBlocker/issues">project's GitHub repository</a>.</p>
+    </div>
+
+    <!-- Japanese -->
+    <div id="lang-ja" class="lang-section">
+      <h2>プライバシーポリシー</h2>
+
+      <h3>データの収集</h3>
+      <p>InterstitialBlockerは、個人データの収集、送信、共有を<strong>一切行いません</strong>。すべての処理はお使いのブラウザ内で完結します。</p>
+
+      <h3>ローカルに保存されるデータ</h3>
+      <p>以下のデータが、ブラウザの組み込みストレージ（<code>chrome.storage.sync</code>）を使用してお使いのデバイスにローカル保存されます：</p>
+      <ul>
+        <li><strong>拡張機能の設定</strong>: 有効/無効の状態、検出感度の閾値、デバッグログの設定。</li>
+        <li><strong>ホワイトリスト</strong>: 拡張機能を無効にしたドメインの一覧。</li>
+        <li><strong>検出履歴</strong>: 最近のインターステーシャル検出の記録（最大100件）。ドメイン、タイムスタンプ、検出スコア、解決方法が含まれます。このデータは拡張機能の動作を確認するためにのみ保存されます。</li>
+      </ul>
+      <p>これらのデータは、Chrome/Edgeの同期にサインインしている場合にのみブラウザ間で同期されます。外部サーバーに送信されることはありません。</p>
+
+      <h3>権限</h3>
+      <ul>
+        <li><strong><code>&lt;all_urls&gt;</code> / ホスト権限</strong>: 訪問する任意のウェブサイトでインターステーシャル広告を検出・閉じるために必要です。拡張機能はインターステーシャルのオーバーレイ以外のページコンテンツを読み取ったり変更したりしません。</li>
+        <li><strong><code>storage</code></strong>: 設定と検出履歴をローカルに保存するために使用します。</li>
+        <li><strong><code>activeTab</code> / <code>tabs</code></strong>: ポップアップに現在のドメインを表示し、サイトごとのホワイトリスト設定を管理するために使用します。</li>
+      </ul>
+
+      <h3>サードパーティサービス</h3>
+      <p>InterstitialBlockerは、サードパーティのアナリティクス、トラッキング、広告サービスを一切使用しません。</p>
+
+      <h3>ポリシーの変更</h3>
+      <p>本ポリシーが更新された場合、このページおよび拡張機能のストア掲載ページに反映されます。</p>
+
+      <h3>お問い合わせ</h3>
+      <p>本プライバシーポリシーについてご質問がある場合は、<a href="https://github.com/hiroshi-y/InterstitialBlocker/issues">プロジェクトのGitHubリポジトリ</a>でIssueを作成してください。</p>
+    </div>
+  </div>
+
+  <script>
+    function switchLang(lang) {
+      document.querySelectorAll('.lang-section').forEach(function(el) {
+        el.classList.remove('active');
+      });
+      document.querySelectorAll('.lang-switch button').forEach(function(el) {
+        el.classList.remove('active');
+      });
+      document.getElementById('lang-' + lang).classList.add('active');
+      document.getElementById('btn-' + lang).classList.add('active');
+    }
+  </script>
+</body>
+</html>
