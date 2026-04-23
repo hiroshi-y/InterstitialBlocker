@@ -7,7 +7,7 @@ const manifest = defineManifest({
   version: '0.1.0',
   description: '__MSG_appDescription__',
   default_locale: 'en',
-  permissions: ['storage', 'activeTab', 'tabs'],
+  permissions: ['storage', 'tabs'],
   host_permissions: ['<all_urls>'],
   background: {
     service_worker: 'src/background/service-worker.ts',
