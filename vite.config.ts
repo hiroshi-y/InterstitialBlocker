@@ -3,9 +3,10 @@ import { crx, defineManifest } from '@crxjs/vite-plugin'
 
 const manifest = defineManifest({
   manifest_version: 3,
-  name: 'InterstitialBlocker',
+  name: '__MSG_appName__',
   version: '0.1.0',
-  description: 'Automatically dismiss interstitial ads without blocking other content',
+  description: '__MSG_appDescription__',
+  default_locale: 'en',
   permissions: ['storage', 'activeTab', 'tabs'],
   host_permissions: ['<all_urls>'],
   background: {
