@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>テスト — クッキー同意バナー（誤爆しないこと）</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+  </style>
+</head>
+<body>
+  <h1>クッキー同意バナー テスト（誤爆防止）</h1>
+  <p>期待: Detected ログが出ない（スコアが閾値未満）</p>
+
+  <!-- フッター固定のクッキーバナー -->
+  <div id="cookie-consent" style="
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #333;
+    color: white;
+    padding: 16px 24px;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  ">
+    <p style="margin: 0;">
+      This website uses cookies to ensure you get the best experience.
+      By continuing to use this site, you consent to our use of cookies.
+      See our <a href="#" style="color: #8cf;">Privacy Policy</a> and
+      <a href="#" style="color: #8cf;">Cookie Policy</a> for more information.
+    </p>
+    <button style="
+      background: #4caf50; color: white;
+      border: none; padding: 8px 20px;
+      border-radius: 4px; cursor: pointer;
+      white-space: nowrap;
+    ">Accept All</button>
+  </div>
+
+  <!-- 全画面のGDPR同意モーダル -->
+  <div id="gdpr-overlay" style="
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 20000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  ">
+    <div style="
+      background: white; padding: 30px;
+      border-radius: 8px; max-width: 500px;
+    ">
+      <h2>Cookie Consent</h2>
+      <p>We use cookies and similar technologies to provide the best experience on our website.
+         By clicking "Accept", you consent to the use of ALL cookies.
+         Read our full <a href="#">Privacy Policy</a> and <a href="#">GDPR compliance</a> information.</p>
+      <form>
+        <label><input type="checkbox" checked> Necessary cookies</label><br>
+        <label><input type="checkbox"> Analytics cookies</label><br>
+        <label><input type="checkbox"> Marketing cookies</label><br>
+        <div style="margin-top: 16px;">
+          <button type="button">Accept All</button>
+          <button type="button">Save Preferences</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div style="margin-top: 40px;">
+    <script>
+      for (let i = 0; i < 20; i++) {
+        document.write('<p>記事コンテンツ ' + (i+1) + '</p>');
+      }
+    </script>
+  </div>
+</body>
+</html>

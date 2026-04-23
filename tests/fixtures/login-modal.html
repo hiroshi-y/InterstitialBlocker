@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>テスト — ログインモーダル（誤爆しないこと）</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+  </style>
+</head>
+<body>
+  <h1>ログインモーダル テスト（誤爆防止）</h1>
+  <p>期待: Detected ログが出ない（password input で強いネガティブ）</p>
+
+  <div id="login-overlay" style="
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  ">
+    <div style="
+      background: white; padding: 30px;
+      border-radius: 8px; max-width: 400px; width: 100%;
+    ">
+      <h2>Sign In</h2>
+      <form>
+        <div style="margin-bottom: 12px;">
+          <label>Email</label><br>
+          <input type="email" placeholder="you@example.com" style="width: 100%; padding: 8px; box-sizing: border-box;">
+        </div>
+        <div style="margin-bottom: 12px;">
+          <label>Password</label><br>
+          <input type="password" placeholder="••••••••" style="width: 100%; padding: 8px; box-sizing: border-box;">
+        </div>
+        <button type="submit" style="
+          background: #2196f3; color: white;
+          border: none; padding: 10px 20px;
+          border-radius: 4px; cursor: pointer; width: 100%;
+        ">Sign In</button>
+      </form>
+      <p style="margin-top: 12px; font-size: 13px; color: #666;">
+        Don't have an account? <a href="#">Sign up</a>
+      </p>
+    </div>
+  </div>
+
+  <div style="margin-top: 40px;">
+    <script>
+      for (let i = 0; i < 20; i++) {
+        document.write('<p>記事コンテンツ ' + (i+1) + '</p>');
+      }
+    </script>
+  </div>
+</body>
+</html>

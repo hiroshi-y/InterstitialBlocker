@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>テスト — スクロールロック付きモーダル広告</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+  </style>
+</head>
+<body>
+  <h1>スクロールロック付きモーダル広告 テスト</h1>
+  <p>3秒後に自動表示。body に overflow:hidden + no-scroll クラスが付与されます。</p>
+  <p>期待: 高スコアで検出される</p>
+
+  <script>
+    setTimeout(() => {
+      const overlay = document.createElement('div');
+      overlay.className = 'promo-overlay';
+      overlay.style.cssText = `
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      `;
+
+      const content = document.createElement('div');
+      content.style.cssText = `
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        max-width: 400px;
+        text-align: center;
+      `;
+      content.innerHTML = `
+        <h2>Download Our App!</h2>
+        <p>Get the best experience on mobile.</p>
+        <iframe src="about:blank" width="320" height="100" style="border:none;"></iframe>
+      `;
+
+      overlay.appendChild(content);
+      document.body.appendChild(overlay);
+      document.body.classList.add('no-scroll');
+      document.body.style.overflow = 'hidden';
+    }, 3000);
+  </script>
+
+  <div style="margin-top: 40px;">
+    <script>
+      for (let i = 0; i < 30; i++) {
+        document.write('<p>ページコンテンツ ' + (i+1) + '</p>');
+      }
+    </script>
+  </div>
+</body>
+</html>

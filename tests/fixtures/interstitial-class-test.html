@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layer 1 テスト — interstitial クラス/ID 非表示</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 20px;
+      line-height: 1.8;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 16px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+    }
+    .info { border-color: #2196f3; background: #e3f2fd; }
+    .interstitial-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+    }
+    #results { white-space: pre-wrap; font-family: monospace; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <h1>Layer 1 テスト: interstitial クラス/ID の自動非表示</h1>
+
+  <div class="test-section info">
+    <p>拡張機能が有効なら、以下の要素は <code>display: none !important</code> で非表示になるはずです。</p>
+  </div>
+
+  <!-- テスト対象: class に "interstitial" を含む -->
+  <div class="ad-interstitial-overlay interstitial-overlay" id="test-class">
+    この要素は class="ad-interstitial-overlay" を持つ → 非表示であるべき
+  </div>
+
+  <!-- テスト対象: id に "interstitial" を含む -->
+  <div id="google-interstitial-ad" class="interstitial-overlay">
+    この要素は id="google-interstitial-ad" を持つ → 非表示であるべき
+  </div>
+
+  <!-- テスト対象外: 通常のコンテンツ（誤爆しないことの確認） -->
+  <div class="test-section" id="normal-content">
+    <h2>通常のコンテンツ</h2>
+    <p>この要素は "interstitial" を含まないので、表示されたままであるべきです。</p>
+  </div>
+
+  <div class="test-section">
+    <h2>自動判定</h2>
+    <button onclick="runTest()">テスト実行</button>
+    <div id="results"></div>
+  </div>
+
+  <script>
+    function runTest() {
+      const results = document.getElementById('results');
+      const tests = [];
+
+      const classEl = document.getElementById('test-class');
+      const classDisplay = getComputedStyle(classEl).display;
+      tests.push({
+        name: 'class*="interstitial" → display:none',
+        pass: classDisplay === 'none',
+        actual: classDisplay
+      });
+
+      const idEl = document.getElementById('google-interstitial-ad');
+      const idDisplay = getComputedStyle(idEl).display;
+      tests.push({
+        name: 'id*="interstitial" → display:none',
+        pass: idDisplay === 'none',
+        actual: idDisplay
+      });
+
+      const normalEl = document.getElementById('normal-content');
+      const normalDisplay = getComputedStyle(normalEl).display;
+      tests.push({
+        name: '通常コンテンツ → 表示されたまま',
+        pass: normalDisplay !== 'none',
+        actual: normalDisplay
+      });
+
+      let output = '';
+      let passCount = 0;
+      for (const t of tests) {
+        const icon = t.pass ? '✅' : '❌';
+        if (t.pass) passCount++;
+        output += `${icon} ${t.name} (actual: ${t.actual})\n`;
+      }
+      output += `\n結果: ${passCount}/${tests.length} パス`;
+      results.textContent = output;
+    }
+  </script>
+</body>
+</html>

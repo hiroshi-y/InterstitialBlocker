@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InterstitialBlocker</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>InterstitialBlocker</h1>
+      <label class="toggle" id="global-toggle">
+        <input type="checkbox" id="enabled-checkbox">
+        <span class="toggle-slider"></span>
+      </label>
+    </header>
+
+    <section id="site-section">
+      <div class="site-info">
+        <span class="site-label">現在のサイト:</span>
+        <span id="current-domain" class="domain">—</span>
+      </div>
+      <button id="whitelist-btn" class="btn btn-outline" disabled>
+        このサイトで無効化
+      </button>
+    </section>
+
+    <section id="history-section">
+      <h2>検出履歴 <span id="history-count" class="badge">0</span></h2>
+      <ul id="history-list" class="history-list">
+        <li class="empty">まだ検出履歴がありません</li>
+      </ul>
+      <button id="clear-history" class="btn btn-small btn-text">履歴をクリア</button>
+    </section>
+
+    <footer>
+      <details>
+        <summary>詳細設定</summary>
+        <div class="settings-detail">
+          <label>
+            スコア閾値:
+            <input type="number" id="threshold-input" min="1" max="20" step="1">
+          </label>
+          <label>
+            <input type="checkbox" id="logging-checkbox"> デバッグログ
+          </label>
+        </div>
+      </details>
+    </footer>
+  </div>
+  <script type="module" src="popup.ts"></script>
+</body>
+</html>

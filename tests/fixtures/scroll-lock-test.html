@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layer 1 テスト — スクロールロック解除</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 20px;
+      line-height: 1.8;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 16px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+    }
+    .pass { border-color: #4caf50; background: #e8f5e9; }
+    .fail { border-color: #f44336; background: #ffebee; }
+    .info { border-color: #2196f3; background: #e3f2fd; }
+    button {
+      padding: 8px 16px;
+      margin: 4px;
+      cursor: pointer;
+      border: 1px solid #999;
+      border-radius: 4px;
+      background: #fff;
+    }
+    button:hover { background: #f0f0f0; }
+    #results { white-space: pre-wrap; font-family: monospace; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <h1>Layer 1 テスト: スクロールロック解除</h1>
+
+  <div class="test-section info">
+    <h2>テスト方法</h2>
+    <p>各ボタンを押すと、Interstitial広告がよく使うスクロールロック手法を適用します。<br>
+    拡張機能が有効であれば、ロックが即座に無効化され、ページはスクロール可能なままのはずです。</p>
+  </div>
+
+  <div class="test-section">
+    <h2>テスト1: body overflow: hidden</h2>
+    <button onclick="document.body.style.overflow = 'hidden'">ロック適用</button>
+    <button onclick="document.body.style.overflow = ''">ロック解除</button>
+  </div>
+
+  <div class="test-section">
+    <h2>テスト2: html overflow: hidden</h2>
+    <button onclick="document.documentElement.style.overflow = 'hidden'">ロック適用</button>
+    <button onclick="document.documentElement.style.overflow = ''">ロック解除</button>
+  </div>
+
+  <div class="test-section">
+    <h2>テスト3: body position: fixed (+ top offset)</h2>
+    <button onclick="document.body.style.position = 'fixed'; document.body.style.top = '-' + window.scrollY + 'px'; document.body.style.width = '100%'">ロック適用</button>
+    <button onclick="document.body.style.position = ''; document.body.style.top = ''; document.body.style.width = ''">ロック解除</button>
+  </div>
+
+  <div class="test-section">
+    <h2>テスト4: クラス名ベースのロック</h2>
+    <button onclick="document.body.classList.add('no-scroll')">no-scroll</button>
+    <button onclick="document.body.classList.add('modal-open')">modal-open</button>
+    <button onclick="document.body.classList.add('overflow-hidden')">overflow-hidden</button>
+    <button onclick="document.body.classList.add('locked')">locked</button>
+    <button onclick="document.body.className = ''">全クラス解除</button>
+  </div>
+
+  <div class="test-section">
+    <h2>テスト5: pointer-events: none（コンテンツクリック不可）</h2>
+    <button onclick="document.body.style.pointerEvents = 'none'">ロック適用</button>
+    <button onclick="document.body.style.pointerEvents = ''">ロック解除</button>
+    <p>※ 拡張が有効なら、ロック適用後もこのボタンをクリックできるはずです</p>
+  </div>
+
+  <div class="test-section">
+    <h2>テスト6: 自動判定</h2>
+    <button onclick="runAutoTest()">自動テスト実行</button>
+    <div id="results"></div>
+  </div>
+
+  <!-- スクロールできるかを検証するための長いコンテンツ -->
+  <div style="margin-top: 40px;">
+    <h2>↓ スクロール確認用のコンテンツ ↓</h2>
+  </div>
+  <script>
+    // 長いコンテンツを生成
+    for (let i = 0; i < 50; i++) {
+      const p = document.createElement('p');
+      p.textContent = `段落 ${i + 1}: このテキストはスクロール確認用です。拡張機能が有効な場合、スクロールロックが適用されてもこのテキストまでスクロールできるはずです。`;
+      document.body.appendChild(p);
+    }
+  </script>
+
+  <script>
+    function runAutoTest() {
+      const results = document.getElementById('results');
+      const tests = [];
+
+      // Test: body overflow
+      document.body.style.overflow = 'hidden';
+      const bodyOverflow = getComputedStyle(document.body).overflow;
+      tests.push({
+        name: 'body overflow:hidden → auto',
+        pass: bodyOverflow !== 'hidden',
+        actual: bodyOverflow
+      });
+      document.body.style.overflow = '';
+
+      // Test: html overflow
+      document.documentElement.style.overflow = 'hidden';
+      const htmlOverflow = getComputedStyle(document.documentElement).overflow;
+      tests.push({
+        name: 'html overflow:hidden → auto',
+        pass: htmlOverflow !== 'hidden',
+        actual: htmlOverflow
+      });
+      document.documentElement.style.overflow = '';
+
+      // Test: body position
+      document.body.style.position = 'fixed';
+      const bodyPos = getComputedStyle(document.body).position;
+      tests.push({
+        name: 'body position:fixed → static',
+        pass: bodyPos !== 'fixed',
+        actual: bodyPos
+      });
+      document.body.style.position = '';
+
+      // Test: pointer-events
+      document.body.style.pointerEvents = 'none';
+      const pe = getComputedStyle(document.body).pointerEvents;
+      tests.push({
+        name: 'body pointer-events:none → auto',
+        pass: pe !== 'none',
+        actual: pe
+      });
+      document.body.style.pointerEvents = '';
+
+      // Test: class-based locks
+      for (const cls of ['no-scroll', 'modal-open', 'overflow-hidden', 'locked', 'noscroll']) {
+        document.body.classList.add(cls);
+        const ov = getComputedStyle(document.body).overflow;
+        tests.push({
+          name: `class "${cls}" → overflow auto`,
+          pass: ov !== 'hidden',
+          actual: ov
+        });
+        document.body.classList.remove(cls);
+      }
+
+      // Display results
+      let output = '';
+      let passCount = 0;
+      for (const t of tests) {
+        const icon = t.pass ? '✅' : '❌';
+        if (t.pass) passCount++;
+        output += `${icon} ${t.name} (actual: ${t.actual})\n`;
+      }
+      output += `\n結果: ${passCount}/${tests.length} パス`;
+      if (passCount === tests.length) {
+        output += '\n🎉 Layer 1 の予防的CSSが正しく機能しています！';
+      } else {
+        output += '\n⚠️ 拡張機能が無効か、CSSが注入されていない可能性があります。';
+      }
+      results.textContent = output;
+    }
+  </script>
+</body>
+</html>

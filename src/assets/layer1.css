@@ -1,0 +1,37 @@
+/* ============================================================
+   InterstitialBlocker — Layer 1: Preventive CSS
+   目的: Interstitialが表示されてもユーザーが操作を続けられる状態を維持
+   ============================================================ */
+
+/* スクロールロック解除：html/body */
+html, body {
+  overflow: auto !important;
+  overflow-y: auto !important;
+  overflow-x: auto !important;
+  position: static !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+/* body に対する固定化攻撃の無効化（よくあるクラス名） */
+html.no-scroll, body.no-scroll,
+html.modal-open, body.modal-open,
+html.overflow-hidden, body.overflow-hidden,
+html.locked, body.locked,
+html.noscroll, body.noscroll,
+html.scroll-lock, body.scroll-lock {
+  overflow: auto !important;
+  position: static !important;
+  height: auto !important;
+}
+
+/* pointer-events でコンテンツがクリックできなくなる攻撃の無効化 */
+html, body, main, article {
+  pointer-events: auto !important;
+}
+
+/* 明白なInterstitial系クラス名 */
+[id*="interstitial" i],
+[class*="interstitial" i] {
+  display: none !important;
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>テスト — Google AdSense 風 Interstitial</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Google AdSense 風 Interstitial テスト</h1>
+  <p>3秒後に自動表示されます。iframeベースで高 z-index。</p>
+  <p>期待: 高スコアで検出される（コンソールに Detected ログ）</p>
+
+  <script>
+    setTimeout(() => {
+      const container = document.createElement('div');
+      container.style.cssText = `
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        z-index: 2147483647;
+        background: rgba(0, 0, 0, 0.6);
+      `;
+
+      const adFrame = document.createElement('iframe');
+      adFrame.src = 'about:blank';
+      adFrame.style.cssText = `
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%; height: 70%;
+        border: none;
+        background: white;
+      `;
+
+      container.appendChild(adFrame);
+      document.body.appendChild(container);
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+    }, 3000);
+  </script>
+
+  <div style="margin-top: 40px;">
+    <script>
+      for (let i = 0; i < 30; i++) {
+        document.write('<p>記事のコンテンツ ' + (i+1) + '</p>');
+      }
+    </script>
+  </div>
+</body>
+</html>

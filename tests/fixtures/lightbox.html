@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>テスト — 画像ライトボックス（誤爆しないこと）</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+    .gallery img {
+      width: 200px; height: 150px;
+      object-fit: cover; cursor: pointer;
+      border-radius: 4px; margin: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>画像ライトボックス テスト（誤爆防止）</h1>
+  <p>画像をクリックするとライトボックスが開きます。</p>
+  <p>期待: ユーザークリック直後なので検出をスキップ。また画像ライトボックスの特徴でネガティブ。</p>
+
+  <div class="gallery">
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect fill='%234caf50' width='800' height='600'/%3E%3Ctext x='400' y='300' text-anchor='middle' fill='white' font-size='40'%3EPhoto 1%3C/text%3E%3C/svg%3E" onclick="openLightbox(this)" alt="Photo 1">
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect fill='%232196f3' width='800' height='600'/%3E%3Ctext x='400' y='300' text-anchor='middle' fill='white' font-size='40'%3EPhoto 2%3C/text%3E%3C/svg%3E" onclick="openLightbox(this)" alt="Photo 2">
+  </div>
+
+  <script>
+    function openLightbox(img) {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = `
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      `;
+      overlay.onclick = () => overlay.remove();
+
+      const bigImg = document.createElement('img');
+      bigImg.src = img.src;
+      bigImg.style.cssText = 'max-width: 90%; max-height: 90%; object-fit: contain;';
+
+      overlay.appendChild(bigImg);
+      document.body.appendChild(overlay);
+    }
+  </script>
+
+  <div style="margin-top: 40px;">
+    <script>
+      for (let i = 0; i < 20; i++) {
+        document.write('<p>ギャラリーの説明テキスト ' + (i+1) + '</p>');
+      }
+    </script>
+  </div>
+</body>
+</html>
