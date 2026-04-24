@@ -76,6 +76,15 @@ export function scoreAsInterstitial(el: Element): number {
   const tag = el.tagName
   if (tag === 'BODY' || tag === 'HTML') return 0
   if (tag === 'MAIN' || tag === 'HEADER' || tag === 'FOOTER' || tag === 'NAV') return 0
+  if (tag === 'UL' || tag === 'OL' || tag === 'LI' || tag === 'TABLE' ||
+      tag === 'P' || tag === 'H1' || tag === 'H2' || tag === 'H3' ||
+      tag === 'FORM' || tag === 'VIDEO' || tag === 'IMG' || tag === 'PICTURE' ||
+      tag === 'CANVAS' || tag === 'SVG') return 0
+
+  const role = el.getAttribute('role')
+  if (role === 'application' || role === 'navigation' || role === 'search' ||
+      role === 'tabpanel' || role === 'toolbar' || role === 'menu' ||
+      role === 'menubar' || role === 'tablist') return 0
 
   const rect = el.getBoundingClientRect()
   const vw = window.innerWidth
@@ -86,8 +95,14 @@ export function scoreAsInterstitial(el: Element): number {
 
   const style = getComputedStyle(el)
   if (style.display === 'none' || style.visibility === 'hidden') return 0
+  if (parseFloat(style.opacity) < 0.05) return 0
+  if (style.pointerEvents === 'none' && parseFloat(style.opacity) < 0.5) return 0
 
   if (style.position !== 'fixed' && style.position !== 'absolute') return 0
+
+  const mapSelector = '.gm-style, [class*="mapbox"], [class*="leaflet"]'
+  if (el.closest(mapSelector) || el.querySelector(mapSelector) ||
+      el.parentElement?.querySelector(mapSelector)) return 0
 
   let score = 0
 
@@ -133,6 +148,7 @@ export function scoreAsInterstitial(el: Element): number {
   if (el.querySelector('form')) score -= 2
   if (el.querySelector('input[type="password"]')) score -= 10
   if (el.querySelector('input[type="email"]')) score -= 3
+  if (el.querySelector('input[type="text"], input[type="search"], input:not([type]), [role="searchbox"], [role="combobox"], [contenteditable="true"]')) score -= 5
 
   const text = (el.textContent || '').slice(0, 500).toLowerCase()
   if (/cookie|consent|gdpr|privacy.policy/.test(text)) score -= 5
@@ -148,6 +164,19 @@ export function scoreAsInterstitial(el: Element): number {
   if (/\b(banner|creative.container|clickthrough|ad-?slot|ad-?unit|ad-?container)\b/.test(idClass)) score -= 3
 
   if (window.self !== window.top) score -= 3
+
+  if (el.querySelector('iframe[src*="stripe.com"], iframe[src*="paypal"], iframe[src*="three-ds"], iframe[src*="3ds"], iframe[src*="securepay"]')) score -= 15
+  if (el.hasAttribute('data-react-aria-top-layer')) score -= 5
+
+  const hasAdIndicator =
+    /\b(ad|ads|advert|sponsor|promo)\b/.test(idClass) ||
+    /interstitial|overlay|popup|modal-ad/.test(idClass) ||
+    el.querySelector('iframe') !== null ||
+    el.hasAttribute('data-ad-status') ||
+    el.hasAttribute('data-vignette-loaded') ||
+    el.querySelector('[data-ad-status], [data-vignette-loaded], ins.adsbygoogle') !== null
+
+  if (!hasAdIndicator) score = Math.min(score, getScoreThreshold() - 1)
 
   return score
 }
