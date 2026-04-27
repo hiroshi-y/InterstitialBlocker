@@ -170,7 +170,7 @@ export function scoreAsInterstitial(el: Element): number {
 
   const hasAdIndicator =
     /\b(ad|ads|advert|sponsor|promo)\b/.test(idClass) ||
-    /interstitial|overlay|popup|modal-ad/.test(idClass) ||
+    /interstitial|modal-ad/.test(idClass) ||
     el.querySelector('iframe') !== null ||
     el.hasAttribute('data-ad-status') ||
     el.hasAttribute('data-vignette-loaded') ||
